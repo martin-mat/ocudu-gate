@@ -37,6 +37,7 @@ jobs:
           echo "::group::node allocation"; kubectl describe nodes | grep -A9 "Allocated resources"; echo "::endgroup::"
           for ns in cnti-default; do
             for pod in $(kubectl get pods -n "$ns" -o name); do
+              echo "::group::state $pod"; kubectl get -n "$ns" "$pod" -o jsonpath='{range .status.containerStatuses[*]}{.name}: ready={.ready} restarts={.restartCount} state={.state} last={.lastState}{"\n"}{end}'; echo "::endgroup::"
               echo "::group::describe $pod"; kubectl describe -n "$ns" "$pod" | tail -40; echo "::endgroup::"
               echo "::group::logs $pod"; kubectl logs -n "$ns" "$pod" --all-containers --tail=120; echo "::endgroup::"
               echo "::group::previous logs $pod"; kubectl logs -n "$ns" "$pod" --all-containers --previous --tail=80 2>/dev/null; echo "::endgroup::"
