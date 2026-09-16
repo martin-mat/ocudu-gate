@@ -26,3 +26,20 @@ jobs:
           cnf_config: cnti-testsuite.yaml
           install_timeout: 900
           badge_branch: badges
+
+      # Why did the gNB not come up? Pod state, events and container logs from the
+      # kind cluster the action created (it lives until the job ends).
+      - name: Diagnostics
+        if: failure()
+        run: |
+          set +e
+          echo "::group::pods"; kubectl get pods -A -o wide; echo "::endgroup::"
+          echo "::group::node allocation"; kubectl describe nodes | grep -A9 "Allocated resources"; echo "::endgroup::"
+          for ns in cnti-default; do
+            for pod in $(kubectl get pods -n "$ns" -o name); do
+              echo "::group::describe $pod"; kubectl describe -n "$ns" "$pod" | tail -40; echo "::endgroup::"
+              echo "::group::logs $pod"; kubectl logs -n "$ns" "$pod" --all-containers --tail=120; echo "::endgroup::"
+              echo "::group::previous logs $pod"; kubectl logs -n "$ns" "$pod" --all-containers --previous --tail=80 2>/dev/null; echo "::endgroup::"
+            done
+          done
+          echo "::group::events"; kubectl get events -n cnti-default --sort-by=.lastTimestamp | tail -30; echo "::endgroup::"
