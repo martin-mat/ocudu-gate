@@ -1,0 +1,29 @@
+name: CNTi certification
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+  push:
+    branches: [main]
+    paths: [cnti-testsuite.yaml, gnb-values.yaml, .github/workflows/cnti.yml]
+
+permissions:
+  contents: write   # the action publishes the badge to the 'badges' branch
+
+concurrency:
+  group: cnti-certification
+  cancel-in-progress: false
+
+jobs:
+  cert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      # TODO: switch to lfn-cnti/testsuite-action@v1 once v1.0.0 is tagged
+      - uses: lfn-cnti/testsuite-action@action-v1
+        with:
+          cnf_config: cnti-testsuite.yaml
+          install_timeout: 900
+          badge_branch: badges

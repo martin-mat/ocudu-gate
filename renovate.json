@@ -1,0 +1,14 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^cnti-testsuite\\.yaml$/"],
+      "matchStrings": ["chart_version:\\s*\"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "registry.gitlab.com/ocudu/ocudu_elements/ocudu_helm/ocudu-gnb",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    }
+  ]
+}
