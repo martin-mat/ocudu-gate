@@ -15,17 +15,21 @@ sriovConfig:
 # derives a timestamped log directory from that filename ("./<timestamp>"), which the
 # non-root container cannot create, and exits before starting the gNB.
 persistence:
+  # No hostPath log volume (the chart's default): an emptyDir is enough for stdout logging.
+  enabled: false
   preserveOldLogs: false
 
 # A 4-vCPU runner: one 20 MHz 1x1 cell in test mode instead of the chart's default
 # 100 MHz 4T2R, no hugepages.
+# Sized so that three replicas (increase_decrease_capacity) fit on the two 4-vCPU
+# worker nodes of the runner's kind cluster.
 resources:
   requests:
+    cpu: "1"
+    memory: 2Gi
+  limits:
     cpu: "2"
     memory: 3Gi
-  limits:
-    cpu: "3"
-    memory: 4Gi
 
 config:
   gnb-config.yml: |-
