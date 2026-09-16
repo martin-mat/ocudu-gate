@@ -45,9 +45,11 @@ config:
                   - sst: 1
 
     # Dummy radio unit: no fronthaul, no RU; the DU still runs its full L1/L2.
+    # time_scaling > 1 slows the dummy RU's slot clock and with it the CPU load per
+    # gNB, so that three replicas (increase_decrease_capacity) come up on 4 vCPUs.
     ru_dummy:
       dl_processing_delay: 1
-      time_scaling: 1
+      time_scaling: 2
 
     cell_cfg:
       dl_arfcn: 632628
