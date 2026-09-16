@@ -21,8 +21,7 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
-      # TODO: switch to lfn-cnti/testsuite-action@v1 once v1.0.0 is tagged
-      - uses: lfn-cnti/testsuite-action@action-v1
+      - uses: lfn-cnti/testsuite-action@v1
         with:
           cnf_config: cnti-testsuite.yaml
           install_timeout: 900
