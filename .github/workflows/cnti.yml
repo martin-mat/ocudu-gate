@@ -19,6 +19,13 @@ jobs:
   cert:
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    env:
+      # The action's three kind nodes share this one 4-vCPU runner, so the
+      # third gNB replica of increase_decrease_capacity can take longer than
+      # the suite's default 60-second operation budget to become ready (it
+      # did on 2026-09-24). Until the suite waits on its pod readiness budget
+      # for that (lfn-cnti/testsuite#2573), widen the generic one here.
+      CNTI_TESTSUITE_GENERIC_OPERATION_TIMEOUT: "180"
     steps:
       - uses: actions/checkout@v4
       - uses: lfn-cnti/testsuite-action@v1
